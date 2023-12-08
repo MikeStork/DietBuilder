@@ -12,6 +12,7 @@ public class Meal {
     Integer id;
     String name;
     String type;
+    Integer weight;
 
     public String getName() {
         return name;
@@ -48,13 +49,23 @@ public class Meal {
     Integer amount;
     Integer product_id;
 
-    public Meal(Integer id, String name, String type, Integer amount, Integer product_id) {
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public Meal(Integer id, String name, String type, Integer weight, Integer amount, Integer product_id) {
         this.id = id;
         this.name = name;
         this.type = type;
+        this.weight = weight;
         this.amount = amount;
         this.product_id = product_id;
     }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
 
 
 }
