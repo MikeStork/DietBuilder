@@ -15,13 +15,15 @@ public class ProductController {
             preparedStatement.execute();
             ResultSet rs = preparedStatement.getResultSet();
             while (rs.next()){
-                products.add(new Product(rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getFloat("carbs"),
-                        rs.getFloat("fats"),
-                        rs.getFloat("proteins"),
-                        rs.getBoolean("active")
-                        ));
+                if(rs.getBoolean("active")){
+                    products.add(new Product(rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getFloat("carbs"),
+                            rs.getFloat("fats"),
+                            rs.getFloat("proteins"),
+                            rs.getBoolean("active")
+                            ));
+                }
             }
         }catch(Exception e){
             e.printStackTrace();
@@ -29,7 +31,7 @@ public class ProductController {
 
         return products;
     }
-    public static void save(Product product) {
+    public static boolean save(Product product) {
         String query = "INSERT INTO `products` (`name`, `carbs`, `fats`, `proteins`, `active`) " +
                 "VALUES (?, ?, ?, ?, ?)";
         Connection conn = Database.GetConnection();
@@ -39,7 +41,7 @@ public class ProductController {
             preparedStatement.setFloat(2, product.getCarbs());
             preparedStatement.setFloat(3, product.getFats());
             preparedStatement.setFloat(4, product.getProteins());
-            preparedStatement.setBoolean(6, product.isActive());
+            preparedStatement.setBoolean(5, product.isActive());
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows > 0) {
@@ -48,10 +50,12 @@ public class ProductController {
                     int productId = generatedKeys.getInt(1);
                     product.setId(productId);
                 }
+                return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     public static void delete(int productId) {
