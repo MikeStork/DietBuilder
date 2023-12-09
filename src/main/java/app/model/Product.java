@@ -56,6 +56,9 @@ public class Product {
 
     Float proteins;
     Boolean active;
+    public Product(){
+
+    }
 
     public Product(Integer id, String name, Float carbs, Float fats, Float proteins, Boolean active) {
         this.id = id;

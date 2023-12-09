@@ -156,7 +156,6 @@ public class MealController {
                     double fats = resultSet.getDouble("fats");
                     double proteins = resultSet.getDouble("proteins");
 
-                    // Tworzenie struktury danych
                     resultMap.computeIfAbsent(type, k -> new HashMap<>());
                     resultMap.get(type).computeIfAbsent(mealName, k -> new ArrayList<>());
 
