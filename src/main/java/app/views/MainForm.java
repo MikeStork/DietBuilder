@@ -9,10 +9,7 @@ import app.model.Product;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 public class MainForm extends JFrame {
@@ -94,7 +91,7 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (SelectedMeal == -1){
-                    JOptionPane.showMessageDialog(MainForm.this, "Meal not selected");
+                    JOptionPane.showMessageDialog(MainForm.this, "Meal not selected", "An error occured", JOptionPane.ERROR_MESSAGE);
                 }else {
                 MealController.deleteMealsByName(String.valueOf(MealsModel.getValueAt(mealsTable.getSelectedRow(),1)));
                 populateMealsTable();
@@ -119,7 +116,7 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (SelectedProduct == -1){
-                    JOptionPane.showMessageDialog(MainForm.this, "Product not selected");
+                    JOptionPane.showMessageDialog(MainForm.this, "Product not selected", "An error occured", JOptionPane.ERROR_MESSAGE);
                 }else {
                     SwingUtilities.invokeLater(()->{
                         EditProdDialog d = new EditProdDialog(ProductsModel,productsTable.getSelectedRow());
@@ -134,9 +131,9 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (SelectedMeal == -1){
-                    JOptionPane.showMessageDialog(MainForm.this, "Meal not selected");
+                    JOptionPane.showMessageDialog(MainForm.this, "Meal not selected", "An error occured", JOptionPane.ERROR_MESSAGE);
                 }else {
-                    ArrayList<Product> prodsForMeal = MealController.productsForMeal(SelectedMeal);
+                    ArrayList<Product> prodsForMeal = MealController.productsForMeal(String.valueOf(MealsModel.getValueAt(mealsTable.getSelectedRow(),1)));
                     Object[][] data = prodsForMeal.stream().map(Product -> new Object[]{
                             Product.getId(),
                             Product.getName(),
@@ -147,7 +144,18 @@ public class MainForm extends JFrame {
                     }).toArray(Object[][]::new);
                     MyTableModel ProdsForMealModel = new MyTableModel(data, new String[]{"Id","Name","Carbs","Fats","Proteins"});
                     SwingUtilities.invokeLater(()->{
-                        new EditMealDialog(MealsModel, ProductsModel, ProdsForMealModel, mealsTable.getSelectedRow());
+                        EditMealDialog editMealDialog = new EditMealDialog(MealsModel, ProductsModel, ProdsForMealModel, mealsTable.getSelectedRow());
+                        editMealDialog.addWindowListener(new WindowAdapter() {
+                            @Override
+                            public void windowClosed(WindowEvent e) {
+                                populateProductsTable();
+                                populateMealsTable();
+
+                                mealsTable.setModel(MealsModel);
+                                ProductsModel.fireTableDataChanged();
+                                mealsTable.scrollRectToVisible(mealsTable.getCellRect(mealsTable.getSelectedRow(), 0, true));
+                            }
+                        });
                     });
                 }
             }
@@ -164,8 +172,10 @@ public class MainForm extends JFrame {
                 Product.getActive()
         }).toArray(Object[][]::new);
         ProductsModel = new MyTableModel(data, new String[]{"Id","Name","Carbs","Fats","Proteins"});
-        ProductsModel.fireTableDataChanged();
-        productsTable.setModel(ProductsModel);
+        SwingUtilities.invokeLater(()->{
+            ProductsModel.fireTableDataChanged();
+            productsTable.setModel(ProductsModel);
+        });
     }
     public void populateMealsTable(){
         ArrayList<Meal> mealsList = MealController.list();
@@ -177,6 +187,10 @@ public class MainForm extends JFrame {
         MealsModel = new MyTableModel(data, new String[]{"Id","Name","Type"});
         MealsModel.fireTableDataChanged();
         mealsTable.setModel(MealsModel);
+        SwingUtilities.invokeLater(()->{
+            MealsModel.fireTableDataChanged();
+            mealsTable.setModel(MealsModel);
+        });
     }
 
 }

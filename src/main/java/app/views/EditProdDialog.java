@@ -68,7 +68,7 @@ public class EditProdDialog extends JDialog {
         if (editedSuccesfully) {
             productsModel.removeRow(editedRow);
             productsModel.insertRow(editedRow, new Object[]{product.getId(), product.getName(), product.getCarbs(), product.getFats(), product.getProteins()});
-//          productsModel.fireTableDataChanged();
+            productsModel.fireTableDataChanged();
         }
         dispose();
     }

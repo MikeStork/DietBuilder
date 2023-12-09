@@ -71,20 +71,18 @@ public class MealController {
             return meals;
         }
 
-        public static ArrayList<Product> productsForMeal(int mealId) {
-            String query = "SELECT p.* FROM `products` p " +
-                    "JOIN `meals` m ON p.id = m.product_id " +
-                    "WHERE m.id = ?";
+        public static ArrayList<Product> productsForMeal(String name) {
+            String query = "SELECT m.id AS mealProdId, p.* FROM `products` p JOIN `meals` m ON p.id = m.product_id WHERE m.name = ?";
             ArrayList<Product> products = new ArrayList<>();
             Connection conn = Database.GetConnection();
 
             try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
-                preparedStatement.setInt(1, mealId);
+                preparedStatement.setString(1, name);
                 preparedStatement.execute();
                 ResultSet rs = preparedStatement.getResultSet();
                 while (rs.next()) {
                     products.add(new Product(
-                            rs.getInt("id"),
+                            rs.getInt("mealProdId"),
                             rs.getString("name"),
                             rs.getFloat("carbs"),
                             rs.getFloat("fats"),

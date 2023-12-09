@@ -30,7 +30,8 @@ public class AddProdToMeal extends JDialog {
         setContentPane(contentPane);
         getRootPane().setDefaultButton(buttonOK);
         setAlwaysOnTop(true);
-        setSize(500, 500);
+        setLocationRelativeTo(null);
+        setSize(500, 520);
         setVisible(true);
 
         productsTable.addMouseListener(new MouseAdapter() {
@@ -81,6 +82,8 @@ public class AddProdToMeal extends JDialog {
                     productsModel.getValueAt(productsTable.getSelectedRow(),4)
             });
             ProdsForMealModel.fireTableDataChanged();
+        }else{
+            JOptionPane.showMessageDialog(null, "Product to meal insertion unsuccessful", "An error occured", JOptionPane.ERROR_MESSAGE);
         }
         dispose();
     }

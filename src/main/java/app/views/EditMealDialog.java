@@ -1,6 +1,7 @@
 package app.views;
 
 import app.controllers.MealController;
+import app.controllers.ValidationController;
 import app.model.Meal;
 import app.model.MyTableModel;
 
@@ -104,6 +105,11 @@ public class EditMealDialog extends JDialog {
             mealsModel.removeRow(selectedRow);
             mealsModel.insertRow(selectedRow,new Object[]{mealId, NameField.getText(),TypeField.getText()});
             mealsModel.fireTableDataChanged();
+            SwingUtilities.invokeLater(()->{
+                mealsModel.fireTableDataChanged();
+            });
+        }else{
+            JOptionPane.showMessageDialog(null, "Meal update unsuccessful", "An error occured", JOptionPane.ERROR_MESSAGE);
         }
         dispose();
     }
