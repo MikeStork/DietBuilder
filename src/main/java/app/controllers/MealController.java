@@ -15,6 +15,8 @@ import app.model.Product;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MealController {
     String table_listing_query = "SELECT m.type AS rodzaj_posiłku, m.name AS nazwa_posiłku, p.name AS nazwa_produktu, p.carbs, p.fats, p.proteins, p.weight FROM meals m JOIN products p ON m.product_id = p.id ORDER BY m.type, m.name, p.name; ";
@@ -96,7 +98,6 @@ public class MealController {
 
             return products;
         }
-    //WARNING TODO ERROR WARNING! -> usuwa id a nie wszystkie id, trzeba po nazwie
         public static void delete(int mealId) {
             String query = "DELETE FROM `meals` WHERE `id` = ?";
             Connection conn = Database.GetConnection();
@@ -136,5 +137,49 @@ public class MealController {
         return false;
     }
 
+    public Map<String, Map<String, ArrayList<Map<String, Object>>>> getPDFModel(ArrayList<String> mealNames) {
+        String query = "SELECT meals.type, meals.name, products.name, meals.weight, meals.amount, ROUND(products.carbs * (meals.weight / 100),2) as \"carbs\", ROUND(products.fats * (meals.weight / 100),2) as \"fats\", ROUND(products.proteins * (meals.weight / 100),2) as \"proteins\" FROM meals JOIN products ON meals.product_id = products.id";
+        Connection conn = Database.GetConnection();
+        Map<String, Map<String, ArrayList<Map<String, Object>>>> resultMap = new HashMap<>();
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+
+            while (resultSet.next()) {
+                if (mealNames.contains(resultSet.getString("name"))) {
+                    String type = resultSet.getString("type");
+                    String mealName = resultSet.getString("name");
+                    String productName = resultSet.getString("products.name");
+                    double weight = resultSet.getDouble("weight");
+                    double amount = resultSet.getDouble("amount");
+                    double carbs = resultSet.getDouble("carbs");
+                    double fats = resultSet.getDouble("fats");
+                    double proteins = resultSet.getDouble("proteins");
+
+                    // Tworzenie struktury danych
+                    resultMap.computeIfAbsent(type, k -> new HashMap<>());
+                    resultMap.get(type).computeIfAbsent(mealName, k -> new ArrayList<>());
+
+                    Map<String, Object> productMap = new HashMap<>();
+                    productMap.put("productName", productName);
+                    productMap.put("weight", weight);
+                    productMap.put("amount", amount);
+                    productMap.put("carbs", carbs);
+                    productMap.put("fats", fats);
+                    productMap.put("proteins", proteins);
+
+                    resultMap.get(type).get(mealName).add(productMap);
+                }
+            }
+
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+
+        return resultMap;
+    }
+
 }
+
+
 
