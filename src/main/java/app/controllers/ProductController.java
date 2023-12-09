@@ -28,7 +28,7 @@ public class ProductController {
         }catch(Exception e){
             e.printStackTrace();
         }
-
+        Database.StopConnection(conn);
         return products;
     }
     public static boolean save(Product product) {
@@ -50,11 +50,35 @@ public class ProductController {
                     int productId = generatedKeys.getInt(1);
                     product.setId(productId);
                 }
+                Database.StopConnection(conn);
                 return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        Database.StopConnection(conn);
+        return false;
+    }
+
+    public static boolean edit(Product product) {
+        String query = "UPDATE `products` SET `name` = ?, `carbs` = ?, `fats` = ?, `proteins` = ?, `active` = ? WHERE `id` = ?";
+        Connection conn = Database.GetConnection();
+
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setString(1, product.getName());
+            preparedStatement.setFloat(2, product.getCarbs());
+            preparedStatement.setFloat(3, product.getFats());
+            preparedStatement.setFloat(4, product.getProteins());
+            preparedStatement.setBoolean(5, product.isActive());
+            preparedStatement.setInt(6, product.getId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+            Database.StopConnection(conn);
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        Database.StopConnection(conn);
         return false;
     }
 
@@ -68,5 +92,6 @@ public class ProductController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        Database.StopConnection(conn);
     }
 }

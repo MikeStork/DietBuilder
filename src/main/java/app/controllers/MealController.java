@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class MealController {
     String table_listing_query = "SELECT m.type AS rodzaj_posiłku, m.name AS nazwa_posiłku, p.name AS nazwa_produktu, p.carbs, p.fats, p.proteins, p.weight FROM meals m JOIN products p ON m.product_id = p.id ORDER BY m.type, m.name, p.name; ";
 
-        public static void save(Meal meal, int productId) {
+        public static boolean save(Meal meal, int productId) {
             String mealQuery = "INSERT INTO `meals` (`name`, `type`, `amount`, `product_id`, `weight`) " +
                     "VALUES (?, ?, ?, ?, ?)";
             Connection conn = Database.GetConnection();
@@ -38,10 +38,12 @@ public class MealController {
                         int mealId = generatedKeys.getInt(1);
                         meal.setId(mealId);
                     }
+                    return true;
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            return false;
         }
 
         public static ArrayList<Meal> list() {
@@ -96,7 +98,7 @@ public class MealController {
 
             return products;
         }
-
+    //WARNING TODO ERROR WARNING! -> usuwa id a nie wszystkie id, trzeba po nazwie
         public static void delete(int mealId) {
             String query = "DELETE FROM `meals` WHERE `id` = ?";
             Connection conn = Database.GetConnection();
@@ -108,6 +110,33 @@ public class MealController {
                 e.printStackTrace();
             }
         }
+    public static void deleteMealsByName(String mealName) {
+        String query = "DELETE FROM `meals` WHERE `name` = ?";
+        Connection conn = Database.GetConnection();
+
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setString(1, mealName);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static boolean editNameAndType(String oldName, String newName, String newType) {
+        String query = "UPDATE `meals` SET `name` = ?, `type` = ? WHERE `name` = ?";
+        Connection conn = Database.GetConnection();
+
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setString(1, newName);
+            preparedStatement.setString(2, newType);
+            preparedStatement.setString(3, oldName);
+
+            int affectedRows = preparedStatement.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 }
 

@@ -5,35 +5,34 @@ import app.model.MyTableModel;
 import app.model.Product;
 
 import javax.swing.*;
-import javax.swing.table.TableModel;
 import java.awt.event.*;
 
-public class AddProdDialog extends JDialog {
+public class EditProdDialog extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JTextField NameField;
+    private JLabel idField;
     private JTextField CarbsField;
     private JTextField FatsField;
     private JTextField ProteinsField;
+    private JTextField NameField;
     private MyTableModel productsModel;
+    private Integer editedRow;
 
-    public Boolean getResult() {
-        return result;
-    }
-
-    private Boolean result = false;
-
-    public AddProdDialog(MyTableModel ProductsModel) {
-        productsModel = ProductsModel;
+    public EditProdDialog(MyTableModel ProductsModel, Integer editedRow) {
+        this.productsModel = ProductsModel;
+        this.editedRow = editedRow;
+        idField.setText(String.valueOf(ProductsModel.getValueAt(editedRow,0)));
+        NameField.setText(String.valueOf(ProductsModel.getValueAt(editedRow,1)));
+        CarbsField.setText(String.valueOf(ProductsModel.getValueAt(editedRow,2)));
+        FatsField.setText(String.valueOf(ProductsModel.getValueAt(editedRow,3)));
+        ProteinsField.setText(String.valueOf(ProductsModel.getValueAt(editedRow,4)));
         setContentPane(contentPane);
         setAlwaysOnTop(true);
         setVisible(true);
+        setModal(true);
         setSize(500, 500);
         getRootPane().setDefaultButton(buttonOK);
-        setFocusableWindowState(true);
-        setModal(true);
-
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -64,16 +63,18 @@ public class AddProdDialog extends JDialog {
     }
 
     private void onOK() {
-        Product product = new Product(null, NameField.getText(), Float.parseFloat(CarbsField.getText()), Float.parseFloat(FatsField.getText()), Float.parseFloat(ProteinsField.getText()), true);
-        Boolean insertedSuccesfully = ProductController.save(product);
-        if (insertedSuccesfully) {
-            productsModel.addRow(new Object[]{product.getId(), product.getName(), product.getCarbs(), product.getFats(), product.getProteins()});
-            productsModel.fireTableDataChanged();
+        Product product = new Product(Integer.parseInt(idField.getText()), NameField.getText(), Float.parseFloat(CarbsField.getText()), Float.parseFloat(FatsField.getText()), Float.parseFloat(ProteinsField.getText()), true);
+        Boolean editedSuccesfully = ProductController.edit(product);
+        if (editedSuccesfully) {
+            productsModel.removeRow(editedRow);
+            productsModel.insertRow(editedRow, new Object[]{product.getId(), product.getName(), product.getCarbs(), product.getFats(), product.getProteins()});
+//          productsModel.fireTableDataChanged();
         }
         dispose();
     }
 
     private void onCancel() {
+        // add your code here if necessary
         dispose();
     }
 }

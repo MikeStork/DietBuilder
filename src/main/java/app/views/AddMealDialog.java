@@ -1,39 +1,50 @@
 package app.views;
 
+import app.controllers.MealController;
 import app.controllers.ProductController;
+import app.model.Meal;
 import app.model.MyTableModel;
 import app.model.Product;
 
 import javax.swing.*;
-import javax.swing.table.TableModel;
 import java.awt.event.*;
 
-public class AddProdDialog extends JDialog {
+public class AddMealDialog extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
+    private JScrollPane productsScrollPane;
+    private JTable productsTable;
+    private JTextField WeightField;
+    private JTextField AmountField;
     private JTextField NameField;
-    private JTextField CarbsField;
-    private JTextField FatsField;
-    private JTextField ProteinsField;
-    private MyTableModel productsModel;
+    private JTextField TypeField;
+    private MyTableModel mealsModel;
 
     public Boolean getResult() {
         return result;
     }
 
     private Boolean result = false;
+    private Integer selectedProduct;
 
-    public AddProdDialog(MyTableModel ProductsModel) {
-        productsModel = ProductsModel;
+    public AddMealDialog(MyTableModel MealsModel, MyTableModel ProductsModel) {
+        productsTable.setModel(ProductsModel);
+        mealsModel = MealsModel;
         setContentPane(contentPane);
         setAlwaysOnTop(true);
         setVisible(true);
+        setModal(true);
         setSize(500, 500);
         getRootPane().setDefaultButton(buttonOK);
-        setFocusableWindowState(true);
-        setModal(true);
-
+        productsTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                selectedProduct = Integer.parseInt(productsTable.getModel().getValueAt(productsTable.getSelectedRow(), 0).toString());
+                System.out.println("SelProd: "+selectedProduct);
+            }
+        });
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -64,11 +75,11 @@ public class AddProdDialog extends JDialog {
     }
 
     private void onOK() {
-        Product product = new Product(null, NameField.getText(), Float.parseFloat(CarbsField.getText()), Float.parseFloat(FatsField.getText()), Float.parseFloat(ProteinsField.getText()), true);
-        Boolean insertedSuccesfully = ProductController.save(product);
+        Meal meal = new Meal(null,NameField.getText(),TypeField.getText(),Integer.parseInt(WeightField.getText()),Integer.parseInt(AmountField.getText()),selectedProduct);
+        Boolean insertedSuccesfully = MealController.save(meal, meal.getProduct_id());
         if (insertedSuccesfully) {
-            productsModel.addRow(new Object[]{product.getId(), product.getName(), product.getCarbs(), product.getFats(), product.getProteins()});
-            productsModel.fireTableDataChanged();
+            mealsModel.addRow(new Object[]{meal.getId(), meal.getName(),meal.getType()});
+            mealsModel.fireTableDataChanged();
         }
         dispose();
     }

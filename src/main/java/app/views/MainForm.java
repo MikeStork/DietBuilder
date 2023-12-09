@@ -28,8 +28,8 @@ public class MainForm extends JFrame {
     private JButton editMealButton;
     private JScrollPane productsScrollPane;
     private JScrollPane mealsScrollPane;
-    public Integer SelectedProduct;
-    public Integer SelectedMeal;
+    public Integer SelectedProduct = -1;
+    public Integer SelectedMeal = -1;
     private MyTableModel MealsModel;
     private MyTableModel ProductsModel;
     public MainForm() throws HeadlessException {
@@ -40,6 +40,7 @@ public class MainForm extends JFrame {
         setContentPane(mainPanel);
         setTitle("DietBuilder");
         setSize(600,400);
+        setAlwaysOnTop(true);
         setVisible(true);
 
         productsTable.addMouseListener(new MouseAdapter() {
@@ -66,8 +67,9 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 SwingUtilities.invokeLater(()->{
-                    new AddProdDialog(ProductsModel);
+                    AddProdDialog d = new AddProdDialog(ProductsModel);
                 });
+
 
             }
         });
@@ -77,8 +79,12 @@ public class MainForm extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                if (SelectedProduct == -1){
+                    JOptionPane.showMessageDialog(MainForm.this, "Product not selected");
+                }else {
                 ProductController.delete(SelectedProduct);
                 populateProductsTable();
+                }
             }
         });
         deleteMealButton.addActionListener(new ActionListener() {
@@ -87,8 +93,63 @@ public class MainForm extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                MealController.delete(SelectedMeal);
+                if (SelectedMeal == -1){
+                    JOptionPane.showMessageDialog(MainForm.this, "Meal not selected");
+                }else {
+                MealController.deleteMealsByName(String.valueOf(MealsModel.getValueAt(mealsTable.getSelectedRow(),1)));
                 populateMealsTable();
+                }
+            }
+        });
+        addMealButton.addActionListener(new ActionListener() {
+            /**
+             * @param actionEvent
+             */
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                SwingUtilities.invokeLater(()->{
+                    AddMealDialog d = new AddMealDialog(MealsModel, ProductsModel);
+                });
+            }
+        });
+        editProdButton.addActionListener(new ActionListener() {
+            /**
+             * @param actionEvent
+             */
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (SelectedProduct == -1){
+                    JOptionPane.showMessageDialog(MainForm.this, "Product not selected");
+                }else {
+                    SwingUtilities.invokeLater(()->{
+                        EditProdDialog d = new EditProdDialog(ProductsModel,productsTable.getSelectedRow());
+                    });
+                }
+            }
+        });
+        editMealButton.addActionListener(new ActionListener() {
+            /**
+             * @param actionEvent
+             */
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (SelectedMeal == -1){
+                    JOptionPane.showMessageDialog(MainForm.this, "Meal not selected");
+                }else {
+                    ArrayList<Product> prodsForMeal = MealController.productsForMeal(SelectedMeal);
+                    Object[][] data = prodsForMeal.stream().map(Product -> new Object[]{
+                            Product.getId(),
+                            Product.getName(),
+                            Product.getCarbs(),
+                            Product.getFats(),
+                            Product.getProteins(),
+                            Product.getActive()
+                    }).toArray(Object[][]::new);
+                    MyTableModel ProdsForMealModel = new MyTableModel(data, new String[]{"Id","Name","Carbs","Fats","Proteins"});
+                    SwingUtilities.invokeLater(()->{
+                        new EditMealDialog(MealsModel, ProductsModel, ProdsForMealModel, mealsTable.getSelectedRow());
+                    });
+                }
             }
         });
     }
