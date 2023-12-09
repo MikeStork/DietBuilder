@@ -2,6 +2,7 @@ package app.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Recipe {
     public String getType() {
@@ -28,5 +29,12 @@ public class Recipe {
         this.name = name;
     }
 
-    private HashMap<String, Item> items = new HashMap<>();
+    private List<Item> items = new ArrayList<>();
+    public List<Item> getItems() {
+        return items;
+    }
+
+    public void addItem(Item item) {
+        items.add(item);
+    }
 }

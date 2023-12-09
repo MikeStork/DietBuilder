@@ -37,42 +37,42 @@ public class PDFWorker {
             contentStream.endText();
 
             yOffset -= LINE_HEIGHT * 2;
-            for (Map.Entry<String, Map.Entry<String, ArrayList<Map<String, Object>>>> entry : shoppingList.entrySet()) {
-                String type = entry.getKey();
-                ArrayList<Map<String, Object>> items = entry.getValue().getValue();
-
-                if (yOffset - LINE_HEIGHT * (items.size() + 2) < PAGE_MARGIN) {
-
-                    contentStream.close();
-                    page = new PDPage(PDRectangle.A4);
-                    document.addPage(page);
-                    contentStream = new PDPageContentStream(document, page);
-                    contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 10);
-                    yOffset = (int) PDRectangle.A4.getHeight() - PAGE_MARGIN;
-                }
-
-                yOffset -= LINE_HEIGHT;   //space before category name
-
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 10);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(PAGE_MARGIN, yOffset);
-                contentStream.showText("  " + type.toString());
-                contentStream.endText();
-
-                yOffset -= LINE_HEIGHT; //space after category name
-
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 10);
-                for (Meal item : items) {
-                    yOffset -= LINE_HEIGHT;
-                    String itemText = String.format("    %s - %.2f g", item.getName(), item.getWeight());
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(PAGE_MARGIN * 2, yOffset);
-                    contentStream.showText(itemText);
-                    contentStream.endText();
-                }
-
-                yOffset -= LINE_HEIGHT; //space between categories
-            }
+//            for (Map.Entry<String, Map.Entry<String, ArrayList<Map<String, Object>>>> entry : shoppingList.entrySet()) {
+//                String type = entry.getKey();
+//                ArrayList<Map<String, Object>> items = entry.getValue().getValue();
+//
+//                if (yOffset - LINE_HEIGHT * (items.size() + 2) < PAGE_MARGIN) {
+//
+//                    contentStream.close();
+//                    page = new PDPage(PDRectangle.A4);
+//                    document.addPage(page);
+//                    contentStream = new PDPageContentStream(document, page);
+//                    contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 10);
+//                    yOffset = (int) PDRectangle.A4.getHeight() - PAGE_MARGIN;
+//                }
+//
+//                yOffset -= LINE_HEIGHT;   //space before category name
+//
+//                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 10);
+//                contentStream.beginText();
+//                contentStream.newLineAtOffset(PAGE_MARGIN, yOffset);
+//                contentStream.showText("  " + type.toString());
+//                contentStream.endText();
+//
+//                yOffset -= LINE_HEIGHT; //space after category name
+//
+//                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 10);
+//                for (Meal item : items) {
+//                    yOffset -= LINE_HEIGHT;
+//                    String itemText = String.format("    %s - %.2f g", item.getName(), item.getWeight());
+//                    contentStream.beginText();
+//                    contentStream.newLineAtOffset(PAGE_MARGIN * 2, yOffset);
+//                    contentStream.showText(itemText);
+//                    contentStream.endText();
+//                }
+//
+//                yOffset -= LINE_HEIGHT; //space between categories
+//            }
 
             contentStream.close();
 

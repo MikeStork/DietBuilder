@@ -1,22 +1,20 @@
 package app.controllers;
 
 import app.database.Database;
-import app.model.Meal;
-import app.model.Product;
+import app.model.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.*;
+
 import app.database.Database;
 import app.model.Meal;
 import app.model.Product;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MealController {
     String table_listing_query = "SELECT m.type AS rodzaj_posiłku, m.name AS nazwa_posiłku, p.name AS nazwa_produktu, p.carbs, p.fats, p.proteins, p.weight FROM meals m JOIN products p ON m.product_id = p.id ORDER BY m.type, m.name, p.name; ";
@@ -137,10 +135,10 @@ public class MealController {
         return false;
     }
 
-    public Map<String, Map<String, ArrayList<Map<String, Object>>>> getPDFModel(ArrayList<String> mealNames) {
+    public static List<Recipe> getPDFModel(ArrayList<String> mealNames) {
         String query = "SELECT meals.type, meals.name, products.name, meals.weight, meals.amount, ROUND(products.carbs * (meals.weight / 100),2) as \"carbs\", ROUND(products.fats * (meals.weight / 100),2) as \"fats\", ROUND(products.proteins * (meals.weight / 100),2) as \"proteins\" FROM meals JOIN products ON meals.product_id = products.id";
         Connection conn = Database.GetConnection();
-        Map<String, Map<String, ArrayList<Map<String, Object>>>> resultMap = new HashMap<>();
+        List<Recipe>resultList = new ArrayList<>();
         try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
@@ -156,18 +154,25 @@ public class MealController {
                     double fats = resultSet.getDouble("fats");
                     double proteins = resultSet.getDouble("proteins");
 
-                    resultMap.computeIfAbsent(type, k -> new HashMap<>());
-                    resultMap.get(type).computeIfAbsent(mealName, k -> new ArrayList<>());
+                    Recipe existingRecipe = null;
+                    for (Recipe recipe : resultList) {
+                        if (recipe.getType().equals(type) && recipe.getName().equals(mealName)) {
+                            existingRecipe = recipe;
+                            break;
+                        }
+                    }
 
-                    Map<String, Object> productMap = new HashMap<>();
-                    productMap.put("productName", productName);
-                    productMap.put("weight", weight);
-                    productMap.put("amount", amount);
-                    productMap.put("carbs", carbs);
-                    productMap.put("fats", fats);
-                    productMap.put("proteins", proteins);
-
-                    resultMap.get(type).get(mealName).add(productMap);
+                    // Jeśli Recipe nie istnieje, dodaj nowe
+                    if (existingRecipe == null) {
+                        Recipe newRecipe = new Recipe(type, mealName);
+                        Item newItem = new Item(productName, (int) weight, (int) amount, (float) carbs, (float) fats, (float) proteins);
+                        newRecipe.addItem(newItem);
+                        resultList.add(newRecipe);
+                    } else {
+                        // Jeśli Recipe istnieje, dodaj Item do istniejącego
+                        Item newItem = new Item(productName, (int) weight, (int) amount, (float) carbs, (float) fats, (float) proteins);
+                        existingRecipe.addItem(newItem);
+                    }
                 }
             }
 
@@ -175,7 +180,8 @@ public class MealController {
                 e.printStackTrace();
             }
 
-        return resultMap;
+
+        return resultList;
     }
 
 }
