@@ -160,6 +160,17 @@ public class MainForm extends JFrame {
                 }
             }
         });
+        ExportButton.addActionListener(new ActionListener() {
+            /**
+             * @param actionEvent
+             */
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                SwingUtilities.invokeLater(()->{
+                    new ExportToPDFDialog();
+                });
+            }
+        });
     }
     public void populateProductsTable(){
         ArrayList<Product> productList = ProductController.list();
