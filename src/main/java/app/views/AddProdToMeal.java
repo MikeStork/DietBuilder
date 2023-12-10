@@ -1,7 +1,6 @@
 package app.views;
 
 import app.controllers.MealController;
-import app.controllers.ValidationController;
 import app.model.Meal;
 import app.model.MyTableModel;
 

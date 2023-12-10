@@ -1,17 +1,14 @@
 package app.views;
 
 import app.controllers.MealController;
-import app.model.Item;
 import app.model.Meal;
 import app.model.MyTableModel;
 import app.model.Recipe;
 import app.pdf.PDFWorker;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Vector;
 import java.util.stream.Collectors;
 
 public class ExportToPDFDialog extends JDialog {

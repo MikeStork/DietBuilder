@@ -1,11 +1,9 @@
 package app.views;
 
 import app.controllers.MealController;
-import app.controllers.ProductController;
 import app.controllers.ValidationController;
 import app.model.Meal;
 import app.model.MyTableModel;
-import app.model.Product;
 
 import javax.swing.*;
 import java.awt.event.*;

@@ -7,7 +7,6 @@ import app.model.MyTableModel;
 import app.model.Product;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;

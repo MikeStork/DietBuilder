@@ -6,7 +6,6 @@ import app.model.MyTableModel;
 import app.model.Product;
 
 import javax.swing.*;
-import javax.swing.table.TableModel;
 import java.awt.event.*;
 
 public class AddProdDialog extends JDialog {
