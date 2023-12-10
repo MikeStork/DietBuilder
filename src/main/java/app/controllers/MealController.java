@@ -162,14 +162,12 @@ public class MealController {
                         }
                     }
 
-                    // Jeśli Recipe nie istnieje, dodaj nowe
                     if (existingRecipe == null) {
                         Recipe newRecipe = new Recipe(type, mealName);
                         Item newItem = new Item(productName, (int) weight, (int) amount, (float) carbs, (float) fats, (float) proteins);
                         newRecipe.addItem(newItem);
                         resultList.add(newRecipe);
                     } else {
-                        // Jeśli Recipe istnieje, dodaj Item do istniejącego
                         Item newItem = new Item(productName, (int) weight, (int) amount, (float) carbs, (float) fats, (float) proteins);
                         existingRecipe.addItem(newItem);
                     }
