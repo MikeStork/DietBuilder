@@ -37,6 +37,8 @@ public class MainForm extends JFrame {
         setContentPane(mainPanel);
         setTitle("DietBuilder");
         setSize(600,400);
+        setLocationRelativeTo(null);
+        setFocusCycleRoot(true);
         setAlwaysOnTop(true);
         setVisible(true);
 
@@ -65,6 +67,7 @@ public class MainForm extends JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 SwingUtilities.invokeLater(()->{
                     AddProdDialog d = new AddProdDialog(ProductsModel);
+                    setEnabled(true);
                 });
 
 

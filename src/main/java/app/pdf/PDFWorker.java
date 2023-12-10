@@ -1,7 +1,6 @@
 package app.pdf;
 
 import app.model.Item;
-import app.model.Meal;
 import app.model.Recipe;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -11,21 +10,19 @@ import org.apache.pdfbox.pdmodel.font.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class PDFWorker {
     private static final int PAGE_MARGIN = 50;
     private static final int LINE_HEIGHT = 15;
 
-    public static void exportToPDF(List<Recipe> PDFModel){
+    public static Boolean exportToPDF(List<Recipe> PDFModel){
         try {
             PDDocument document = new PDDocument();
             PDPage page = new PDPage(PDRectangle.A4);
             document.addPage(page);
-            File myFont = new File("C:\\PDF\\Lato-Light.ttf");
+//            File myFont = new File("C:\\PDF\\Lato-Light.ttf");
+            File myFont = new File(System.getenv("FONT_PATH"));
             PDFont font0 = PDType0Font.load(document, myFont);
 
             PDPageContentStream contentStream = new PDPageContentStream(document, page);
@@ -58,7 +55,7 @@ public class PDFWorker {
                     yOffset = (int) PDRectangle.A4.getHeight() - PAGE_MARGIN;
                 }
 
-                yOffset -= LINE_HEIGHT;   //space before category name
+                yOffset -= LINE_HEIGHT;
 
                 contentStream.setFont(font0, 10);
                 contentStream.beginText();
@@ -70,7 +67,7 @@ public class PDFWorker {
                 contentStream.beginText();
                 contentStream.newLineAtOffset(PAGE_MARGIN+20, yOffset);
                 recipe.CalculateNutrients();
-                contentStream.showText("    Carbs: " + recipe.getCarbs() + "g    Fats: " + recipe.getFats() + "g    Proteins: "+recipe.getProteins()+"g ");
+                contentStream.showText("    Carbs: " + String.format("%.2f",recipe.getCarbs()) + " g    Fats: " + String.format("%.2f",recipe.getFats()) + " g    Proteins: "+String.format("%.2f",recipe.getProteins())+" g ");
                 contentStream.endText();
 
                 yOffset -= LINE_HEIGHT; //space after category name
@@ -89,15 +86,22 @@ public class PDFWorker {
             }
 
             contentStream.close();
+            try{
+            document.save(getPathToDesktop());
+                document.close();
+                return true;
+            }catch (Exception e){
 
-            document.save(getDesktopPath());
-            document.close();
+                document.close();
+                return false;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
-    private static String getDesktopPath() {
+    private static String getPathToDesktop() {
         String userHome = System.getProperty("user.home");
         String desktopPath = userHome + File.separator + "Desktop";
         return desktopPath + File.separator + "Shopping_List.pdf";

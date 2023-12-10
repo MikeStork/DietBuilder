@@ -6,12 +6,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Database {
-    //    private final static String DBURL = System.getenv("${}");
-//    private final static String DBUSER = System.getenv("DB_USER");
-//    private final static String DBPASS = System.getenv("DB_PASSWORD");
-    private final static String DBURL = "jdbc:mariadb://localhost:3306/dietbuilder";
-    private final static String DBUSER = "root";
-    private final static String DBPASS = "";
+        private final static String DBURL = System.getenv("DB_URL");
+    private final static String DBUSER = System.getenv("DB_USER");
+    private final static String DBPASS = System.getenv("DB_PASSWORD");
     public static Connection GetConnection(){
         Connection connection = null;
         try {

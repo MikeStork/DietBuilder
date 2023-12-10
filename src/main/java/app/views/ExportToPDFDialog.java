@@ -21,8 +21,7 @@ public class ExportToPDFDialog extends JDialog {
     private JTable ExportTable;
     private JButton AddToExport;
     private JComboBox mealsComboBox;
-    private Integer selectedMeal;
-    private MyTableModel MealsTableModel;
+    private Integer selectedMeal = 0;
     private Recipe[] dataToExportTable;
     public ExportToPDFDialog() {
         setContentPane(contentPane);
@@ -90,7 +89,11 @@ public class ExportToPDFDialog extends JDialog {
     private void onOK() {
         MyTableModel tableModel = (MyTableModel) ExportTable.getModel();
         ArrayList<String> MealsToExport = (ArrayList<String>) tableModel.getDataVector().stream().map((Row)->Row.get(0).toString()).collect(Collectors.toList());
-        PDFWorker.exportToPDF(MealController.getPDFModel(MealsToExport));
+        Boolean exportSuccessful = false;
+        exportSuccessful = PDFWorker.exportToPDF(MealController.getPDFModel(MealsToExport));
+        if(!exportSuccessful){
+            JOptionPane.showMessageDialog(null, "PDF export was unsuccessful", "An error occured", JOptionPane.ERROR_MESSAGE);
+        }
         dispose();
     }
 

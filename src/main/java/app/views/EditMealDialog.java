@@ -100,6 +100,11 @@ public class EditMealDialog extends JDialog {
     }
 
     private void onOK() {
+        setTitle("");
+        if(false == (ValidationController.isString(this, NameField) && ValidationController.isString(this, TypeField))){
+            setTitle("Invalid data entered");
+            return;
+        }
         Boolean editedSuccesfully = MealController.editNameAndType(String.valueOf(mealsModel.getValueAt(selectedRow,1)), NameField.getText(), TypeField.getText());
         if (editedSuccesfully) {
             mealsModel.removeRow(selectedRow);

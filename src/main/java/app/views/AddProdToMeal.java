@@ -1,6 +1,7 @@
 package app.views;
 
 import app.controllers.MealController;
+import app.controllers.ValidationController;
 import app.model.Meal;
 import app.model.MyTableModel;
 
@@ -71,7 +72,6 @@ public class AddProdToMeal extends JDialog {
     }
 
     private void onOK() {
-        // add your code here
         Meal newProductInMeal = new Meal(null, String.valueOf(mealsModel.getValueAt(selectedRow,1)),String.valueOf(mealsModel.getValueAt(selectedRow,2)), Integer.parseInt(WeightField.getText()), Integer.parseInt(AmountField.getText()), selectedProduct);
         Boolean addedSuccessfully = MealController.save(newProductInMeal, newProductInMeal.getProduct_id());
         if(addedSuccessfully){

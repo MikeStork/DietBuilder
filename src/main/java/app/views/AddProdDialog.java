@@ -1,6 +1,7 @@
 package app.views;
 
 import app.controllers.ProductController;
+import app.controllers.ValidationController;
 import app.model.MyTableModel;
 import app.model.Product;
 
@@ -34,7 +35,6 @@ public class AddProdDialog extends JDialog {
         setFocusableWindowState(true);
         setModal(true);
 
-
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onOK();
@@ -64,6 +64,11 @@ public class AddProdDialog extends JDialog {
     }
 
     private void onOK() {
+        setTitle("");
+        if(false == (ValidationController.isString(this, NameField) && ValidationController.isFloat(this, CarbsField) && ValidationController.isFloat(this, FatsField) && ValidationController.isFloat(this, ProteinsField))){
+            setTitle("Invalid data entered");
+            return;
+        }
         Product product = new Product(null, NameField.getText(), Float.parseFloat(CarbsField.getText()), Float.parseFloat(FatsField.getText()), Float.parseFloat(ProteinsField.getText()), true);
         Boolean insertedSuccesfully = ProductController.save(product);
         if (insertedSuccesfully) {

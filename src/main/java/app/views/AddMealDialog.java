@@ -2,6 +2,7 @@ package app.views;
 
 import app.controllers.MealController;
 import app.controllers.ProductController;
+import app.controllers.ValidationController;
 import app.model.Meal;
 import app.model.MyTableModel;
 import app.model.Product;
@@ -75,6 +76,11 @@ public class AddMealDialog extends JDialog {
     }
 
     private void onOK() {
+        setTitle("");
+        if(false == (ValidationController.isString(this,NameField) && ValidationController.isString(this, TypeField) && ValidationController.isInteger(this, WeightField) && ValidationController.isInteger(this, AmountField))){
+            setTitle("Invalid data entered");
+            return;
+        }
         Meal meal = new Meal(null,NameField.getText(),TypeField.getText(),Integer.parseInt(WeightField.getText()),Integer.parseInt(AmountField.getText()),selectedProduct);
         Boolean insertedSuccesfully = MealController.save(meal, meal.getProduct_id());
         if (insertedSuccesfully) {
