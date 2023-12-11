@@ -6,9 +6,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Database {
-        private final static String DBURL = System.getenv("DB_URL");
+    private final static String DBURL = System.getenv("DB_URL");
     private final static String DBUSER = System.getenv("DB_USER");
-    private final static String DBPASS = System.getenv("DB_PASSWORD");
+//    private final static String DBPASS = System.getenv("DB_PASSWORD");
+    private final static String DBPASS = "";
+
     public static Connection GetConnection(){
         Connection connection = null;
         try {

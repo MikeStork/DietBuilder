@@ -6,6 +6,7 @@ import app.model.MyTableModel;
 import app.model.Product;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 
 public class AddProdDialog extends JDialog {
@@ -64,7 +65,7 @@ public class AddProdDialog extends JDialog {
 
     private void onOK() {
         setTitle("");
-        if(false == (ValidationController.isString(this, NameField) && ValidationController.isFloat(this, CarbsField) && ValidationController.isFloat(this, FatsField) && ValidationController.isFloat(this, ProteinsField))){
+        if (false == (ValidationController.isString(this, NameField) && ValidationController.isFloat(this, CarbsField) && ValidationController.isFloat(this, FatsField) && ValidationController.isFloat(this, ProteinsField))) {
             setTitle("Invalid data entered");
             return;
         }
@@ -80,4 +81,5 @@ public class AddProdDialog extends JDialog {
     private void onCancel() {
         dispose();
     }
+
 }

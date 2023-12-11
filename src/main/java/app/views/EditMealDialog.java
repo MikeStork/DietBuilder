@@ -5,6 +5,7 @@ import app.controllers.ValidationController;
 import app.model.MyTableModel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 
 public class EditMealDialog extends JDialog {
@@ -17,14 +18,15 @@ public class EditMealDialog extends JDialog {
     private JScrollPane productsScrollPane;
     private JTextField NameField;
     private JTextField TypeField;
-    private  MyTableModel mealsModel;
-    private  MyTableModel productsModel;
-    private  MyTableModel prodsForMealModel;
+    private JLabel TypeLabel;
+    private MyTableModel mealsModel;
+    private MyTableModel productsModel;
+    private MyTableModel prodsForMealModel;
     private Integer selectedProduct = -1;
     private Integer mealId;
     private Integer selectedRow;
 
-    public EditMealDialog(MyTableModel MealsModel, MyTableModel ProductsModel, MyTableModel  ProdsForMealModel, Integer selectedRow) {
+    public EditMealDialog(MyTableModel MealsModel, MyTableModel ProductsModel, MyTableModel ProdsForMealModel, Integer selectedRow) {
         productsModel = ProductsModel;
         prodsForMealModel = ProdsForMealModel;
         productsTable.setModel(prodsForMealModel);
@@ -45,7 +47,7 @@ public class EditMealDialog extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedProduct = Integer.parseInt(productsTable.getModel().getValueAt(productsTable.getSelectedRow(), 0).toString());
-                System.out.println("SelProd: "+selectedProduct);
+                System.out.println("SelProd: " + selectedProduct);
             }
         });
         buttonOK.addActionListener(new ActionListener() {
@@ -91,8 +93,8 @@ public class EditMealDialog extends JDialog {
              */
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                SwingUtilities.invokeLater(()->{
-                    new AddProdToMeal(MealsModel,ProdsForMealModel, ProductsModel, selectedRow);
+                SwingUtilities.invokeLater(() -> {
+                    new AddProdToMeal(MealsModel, ProdsForMealModel, ProductsModel, selectedRow);
                 });
             }
         });
@@ -100,19 +102,19 @@ public class EditMealDialog extends JDialog {
 
     private void onOK() {
         setTitle("");
-        if(false == (ValidationController.isString(this, NameField) && ValidationController.isString(this, TypeField))){
+        if (false == (ValidationController.isString(this, NameField) && ValidationController.isString(this, TypeField))) {
             setTitle("Invalid data entered");
             return;
         }
-        Boolean editedSuccesfully = MealController.editNameAndType(String.valueOf(mealsModel.getValueAt(selectedRow,1)), NameField.getText(), TypeField.getText());
+        Boolean editedSuccesfully = MealController.editNameAndType(String.valueOf(mealsModel.getValueAt(selectedRow, 1)), NameField.getText(), TypeField.getText());
         if (editedSuccesfully) {
             mealsModel.removeRow(selectedRow);
-            mealsModel.insertRow(selectedRow,new Object[]{mealId, NameField.getText(),TypeField.getText()});
+            mealsModel.insertRow(selectedRow, new Object[]{mealId, NameField.getText(), TypeField.getText()});
             mealsModel.fireTableDataChanged();
-            SwingUtilities.invokeLater(()->{
+            SwingUtilities.invokeLater(() -> {
                 mealsModel.fireTableDataChanged();
             });
-        }else{
+        } else {
             JOptionPane.showMessageDialog(null, "Meal update unsuccessful", "An error occured", JOptionPane.ERROR_MESSAGE);
         }
         dispose();
@@ -122,4 +124,5 @@ public class EditMealDialog extends JDialog {
         // add your code here if necessary
         dispose();
     }
+
 }

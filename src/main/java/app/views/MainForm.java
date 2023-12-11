@@ -28,6 +28,7 @@ public class MainForm extends JFrame {
     public Integer SelectedMeal = -1;
     private MyTableModel MealsModel;
     private MyTableModel ProductsModel;
+
     public MainForm() throws HeadlessException {
         populateProductsTable();
         populateMealsTable();
@@ -35,7 +36,7 @@ public class MainForm extends JFrame {
         mealsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setContentPane(mainPanel);
         setTitle("DietBuilder");
-        setSize(600,400);
+        setSize(600, 400);
         setLocationRelativeTo(null);
         setFocusCycleRoot(true);
         setAlwaysOnTop(true);
@@ -46,7 +47,7 @@ public class MainForm extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 SelectedProduct = Integer.parseInt(productsTable.getModel().getValueAt(productsTable.getSelectedRow(), 0).toString());
-                System.out.println("SelProd: "+SelectedProduct);
+                System.out.println("SelProd: " + SelectedProduct);
             }
         });
         mealsTable.addMouseListener(new MouseAdapter() {
@@ -54,7 +55,7 @@ public class MainForm extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 SelectedMeal = Integer.parseInt(mealsTable.getModel().getValueAt(mealsTable.getSelectedRow(), 0).toString());
-                System.out.println("SelMeal:"+SelectedMeal);
+                System.out.println("SelMeal:" + SelectedMeal);
             }
         });
 
@@ -64,7 +65,7 @@ public class MainForm extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                SwingUtilities.invokeLater(()->{
+                SwingUtilities.invokeLater(() -> {
                     AddProdDialog d = new AddProdDialog(ProductsModel);
                     setEnabled(true);
                 });
@@ -78,11 +79,11 @@ public class MainForm extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if (SelectedProduct == -1){
+                if (SelectedProduct == -1) {
                     JOptionPane.showMessageDialog(MainForm.this, "Product not selected");
-                }else {
-                ProductController.delete(SelectedProduct);
-                populateProductsTable();
+                } else {
+                    ProductController.delete(SelectedProduct);
+                    populateProductsTable();
                 }
             }
         });
@@ -92,11 +93,11 @@ public class MainForm extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if (SelectedMeal == -1){
+                if (SelectedMeal == -1) {
                     JOptionPane.showMessageDialog(MainForm.this, "Meal not selected", "An error occured", JOptionPane.ERROR_MESSAGE);
-                }else {
-                MealController.deleteMealsByName(String.valueOf(MealsModel.getValueAt(mealsTable.getSelectedRow(),1)));
-                populateMealsTable();
+                } else {
+                    MealController.deleteMealsByName(String.valueOf(MealsModel.getValueAt(mealsTable.getSelectedRow(), 1)));
+                    populateMealsTable();
                 }
             }
         });
@@ -106,7 +107,7 @@ public class MainForm extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                SwingUtilities.invokeLater(()->{
+                SwingUtilities.invokeLater(() -> {
                     AddMealDialog d = new AddMealDialog(MealsModel, ProductsModel);
                 });
             }
@@ -117,11 +118,11 @@ public class MainForm extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if (SelectedProduct == -1){
+                if (SelectedProduct == -1) {
                     JOptionPane.showMessageDialog(MainForm.this, "Product not selected", "An error occured", JOptionPane.ERROR_MESSAGE);
-                }else {
-                    SwingUtilities.invokeLater(()->{
-                        EditProdDialog d = new EditProdDialog(ProductsModel,productsTable.getSelectedRow());
+                } else {
+                    SwingUtilities.invokeLater(() -> {
+                        EditProdDialog d = new EditProdDialog(ProductsModel, productsTable.getSelectedRow());
                     });
                 }
             }
@@ -132,10 +133,10 @@ public class MainForm extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if (SelectedMeal == -1){
+                if (SelectedMeal == -1) {
                     JOptionPane.showMessageDialog(MainForm.this, "Meal not selected", "An error occured", JOptionPane.ERROR_MESSAGE);
-                }else {
-                    ArrayList<Product> prodsForMeal = MealController.productsForMeal(String.valueOf(MealsModel.getValueAt(mealsTable.getSelectedRow(),1)));
+                } else {
+                    ArrayList<Product> prodsForMeal = MealController.productsForMeal(String.valueOf(MealsModel.getValueAt(mealsTable.getSelectedRow(), 1)));
                     Object[][] data = prodsForMeal.stream().map(Product -> new Object[]{
                             Product.getId(),
                             Product.getName(),
@@ -144,8 +145,8 @@ public class MainForm extends JFrame {
                             Product.getProteins(),
                             Product.getActive()
                     }).toArray(Object[][]::new);
-                    MyTableModel ProdsForMealModel = new MyTableModel(data, new String[]{"Id","Name","Carbs","Fats","Proteins"});
-                    SwingUtilities.invokeLater(()->{
+                    MyTableModel ProdsForMealModel = new MyTableModel(data, new String[]{"Id", "Name", "Carbs", "Fats", "Proteins"});
+                    SwingUtilities.invokeLater(() -> {
                         EditMealDialog editMealDialog = new EditMealDialog(MealsModel, ProductsModel, ProdsForMealModel, mealsTable.getSelectedRow());
                         editMealDialog.addWindowListener(new WindowAdapter() {
                             @Override
@@ -168,13 +169,14 @@ public class MainForm extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                SwingUtilities.invokeLater(()->{
+                SwingUtilities.invokeLater(() -> {
                     new ExportToPDFDialog();
                 });
             }
         });
     }
-    public void populateProductsTable(){
+
+    public void populateProductsTable() {
         ArrayList<Product> productList = ProductController.list();
         Object[][] data = productList.stream().map(Product -> new Object[]{
                 Product.getId(),
@@ -184,23 +186,24 @@ public class MainForm extends JFrame {
                 Product.getProteins(),
                 Product.getActive()
         }).toArray(Object[][]::new);
-        ProductsModel = new MyTableModel(data, new String[]{"Id","Name","Carbs","Fats","Proteins"});
-        SwingUtilities.invokeLater(()->{
+        ProductsModel = new MyTableModel(data, new String[]{"Id", "Name", "Carbs", "Fats", "Proteins"});
+        SwingUtilities.invokeLater(() -> {
             ProductsModel.fireTableDataChanged();
             productsTable.setModel(ProductsModel);
         });
     }
-    public void populateMealsTable(){
+
+    public void populateMealsTable() {
         ArrayList<Meal> mealsList = MealController.list();
         Object[][] data = mealsList.stream().map(Meal -> new Object[]{
                 Meal.getId(),
                 Meal.getName(),
                 Meal.getType()
         }).toArray(Object[][]::new);
-        MealsModel = new MyTableModel(data, new String[]{"Id","Name","Type"});
+        MealsModel = new MyTableModel(data, new String[]{"Id", "Name", "Type"});
         MealsModel.fireTableDataChanged();
         mealsTable.setModel(MealsModel);
-        SwingUtilities.invokeLater(()->{
+        SwingUtilities.invokeLater(() -> {
             MealsModel.fireTableDataChanged();
             mealsTable.setModel(MealsModel);
         });

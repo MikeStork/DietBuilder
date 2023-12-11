@@ -6,6 +6,7 @@ import app.model.MyTableModel;
 import app.model.Product;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 
 public class EditProdDialog extends JDialog {
@@ -17,17 +18,18 @@ public class EditProdDialog extends JDialog {
     private JTextField FatsField;
     private JTextField ProteinsField;
     private JTextField NameField;
+    private JLabel infoLabel;
     private MyTableModel productsModel;
     private Integer editedRow;
 
     public EditProdDialog(MyTableModel ProductsModel, Integer editedRow) {
         this.productsModel = ProductsModel;
         this.editedRow = editedRow;
-        idField.setText(String.valueOf(ProductsModel.getValueAt(editedRow,0)));
-        NameField.setText(String.valueOf(ProductsModel.getValueAt(editedRow,1)));
-        CarbsField.setText(String.valueOf(ProductsModel.getValueAt(editedRow,2)));
-        FatsField.setText(String.valueOf(ProductsModel.getValueAt(editedRow,3)));
-        ProteinsField.setText(String.valueOf(ProductsModel.getValueAt(editedRow,4)));
+        idField.setText(String.valueOf(ProductsModel.getValueAt(editedRow, 0)));
+        NameField.setText(String.valueOf(ProductsModel.getValueAt(editedRow, 1)));
+        CarbsField.setText(String.valueOf(ProductsModel.getValueAt(editedRow, 2)));
+        FatsField.setText(String.valueOf(ProductsModel.getValueAt(editedRow, 3)));
+        ProteinsField.setText(String.valueOf(ProductsModel.getValueAt(editedRow, 4)));
         setContentPane(contentPane);
         setAlwaysOnTop(true);
         setVisible(true);
@@ -65,7 +67,7 @@ public class EditProdDialog extends JDialog {
 
     private void onOK() {
         setTitle("");
-        if(false == (ValidationController.isString(this, NameField) && ValidationController.isFloat(this, CarbsField) && ValidationController.isFloat(this, FatsField) && ValidationController.isFloat(this, ProteinsField))){
+        if (false == (ValidationController.isString(this, NameField) && ValidationController.isFloat(this, CarbsField) && ValidationController.isFloat(this, FatsField) && ValidationController.isFloat(this, ProteinsField))) {
             setTitle("Invalid data entered");
             return;
         }
@@ -83,4 +85,5 @@ public class EditProdDialog extends JDialog {
         // add your code here if necessary
         dispose();
     }
+
 }

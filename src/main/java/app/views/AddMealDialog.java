@@ -6,6 +6,7 @@ import app.model.Meal;
 import app.model.MyTableModel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 
 public class AddMealDialog extends JDialog {
@@ -18,6 +19,7 @@ public class AddMealDialog extends JDialog {
     private JTextField AmountField;
     private JTextField NameField;
     private JTextField TypeField;
+    private JLabel infoLabel;
     private MyTableModel mealsModel;
 
     public Boolean getResult() {
@@ -41,7 +43,7 @@ public class AddMealDialog extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedProduct = Integer.parseInt(productsTable.getModel().getValueAt(productsTable.getSelectedRow(), 0).toString());
-                System.out.println("SelProd: "+selectedProduct);
+                System.out.println("SelProd: " + selectedProduct);
             }
         });
 
@@ -75,14 +77,14 @@ public class AddMealDialog extends JDialog {
 
     private void onOK() {
         setTitle("");
-        if(false == (ValidationController.isString(this,NameField) && ValidationController.isString(this, TypeField) && ValidationController.isInteger(this, WeightField) && ValidationController.isInteger(this, AmountField))){
+        if (false == (ValidationController.isString(this, NameField) && ValidationController.isString(this, TypeField) && ValidationController.isInteger(this, WeightField) && ValidationController.isInteger(this, AmountField))) {
             setTitle("Invalid data entered");
             return;
         }
-        Meal meal = new Meal(null,NameField.getText(),TypeField.getText(),Integer.parseInt(WeightField.getText()),Integer.parseInt(AmountField.getText()),selectedProduct);
+        Meal meal = new Meal(null, NameField.getText(), TypeField.getText(), Integer.parseInt(WeightField.getText()), Integer.parseInt(AmountField.getText()), selectedProduct);
         Boolean insertedSuccesfully = MealController.save(meal, meal.getProduct_id());
         if (insertedSuccesfully) {
-            mealsModel.addRow(new Object[]{meal.getId(), meal.getName(),meal.getType()});
+            mealsModel.addRow(new Object[]{meal.getId(), meal.getName(), meal.getType()});
             mealsModel.fireTableDataChanged();
         }
         dispose();
@@ -91,4 +93,5 @@ public class AddMealDialog extends JDialog {
     private void onCancel() {
         dispose();
     }
+
 }

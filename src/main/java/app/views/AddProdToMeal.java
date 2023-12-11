@@ -5,6 +5,7 @@ import app.model.Meal;
 import app.model.MyTableModel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 
 public class AddProdToMeal extends JDialog {
@@ -15,6 +16,7 @@ public class AddProdToMeal extends JDialog {
     private JTextField WeightField;
     private JTextField AmountField;
     private JTable productsTable;
+    private JLabel infoLabel;
     private Integer selectedProduct;
     private Integer selectedRow;
     private MyTableModel mealsModel;
@@ -39,7 +41,7 @@ public class AddProdToMeal extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedProduct = Integer.parseInt(productsTable.getModel().getValueAt(productsTable.getSelectedRow(), 0).toString());
-                System.out.println("SelProd: "+selectedProduct);
+                System.out.println("SelProd: " + selectedProduct);
             }
         });
         buttonOK.addActionListener(new ActionListener() {
@@ -71,17 +73,17 @@ public class AddProdToMeal extends JDialog {
     }
 
     private void onOK() {
-        Meal newProductInMeal = new Meal(null, String.valueOf(mealsModel.getValueAt(selectedRow,1)),String.valueOf(mealsModel.getValueAt(selectedRow,2)), Integer.parseInt(WeightField.getText()), Integer.parseInt(AmountField.getText()), selectedProduct);
+        Meal newProductInMeal = new Meal(null, String.valueOf(mealsModel.getValueAt(selectedRow, 1)), String.valueOf(mealsModel.getValueAt(selectedRow, 2)), Integer.parseInt(WeightField.getText()), Integer.parseInt(AmountField.getText()), selectedProduct);
         Boolean addedSuccessfully = MealController.save(newProductInMeal, newProductInMeal.getProduct_id());
-        if(addedSuccessfully){
+        if (addedSuccessfully) {
             ProdsForMealModel.addRow(new Object[]{newProductInMeal.getId(),
-                    productsModel.getValueAt(productsTable.getSelectedRow(),1),
-                    productsModel.getValueAt(productsTable.getSelectedRow(),2),
-                    productsModel.getValueAt(productsTable.getSelectedRow(),3),
-                    productsModel.getValueAt(productsTable.getSelectedRow(),4)
+                    productsModel.getValueAt(productsTable.getSelectedRow(), 1),
+                    productsModel.getValueAt(productsTable.getSelectedRow(), 2),
+                    productsModel.getValueAt(productsTable.getSelectedRow(), 3),
+                    productsModel.getValueAt(productsTable.getSelectedRow(), 4)
             });
             ProdsForMealModel.fireTableDataChanged();
-        }else{
+        } else {
             JOptionPane.showMessageDialog(null, "Product to meal insertion unsuccessful", "An error occured", JOptionPane.ERROR_MESSAGE);
         }
         dispose();
@@ -91,4 +93,5 @@ public class AddProdToMeal extends JDialog {
         // add your code here if necessary
         dispose();
     }
+
 }

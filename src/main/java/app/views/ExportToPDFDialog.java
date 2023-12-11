@@ -7,6 +7,7 @@ import app.model.Recipe;
 import app.pdf.PDFWorker;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -18,19 +19,21 @@ public class ExportToPDFDialog extends JDialog {
     private JTable ExportTable;
     private JButton AddToExport;
     private JComboBox mealsComboBox;
+    private JPanel PanelForCombobox;
     private Integer selectedMeal = 0;
     private Recipe[] dataToExportTable;
+
     public ExportToPDFDialog() {
         setContentPane(contentPane);
         getRootPane().setDefaultButton(buttonOK);
         setAlwaysOnTop(true);
         setSize(500, 500);
         ArrayList<Meal> mealsList = MealController.list();
-        var dataToComboBox = mealsList.stream().map(Meal -> Meal.getType()+" | "+Meal.getName()).toArray();
+        var dataToComboBox = mealsList.stream().map(Meal -> Meal.getType() + " | " + Meal.getName()).toArray();
         DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel<>(dataToComboBox);
         mealsComboBox.setModel(comboBoxModel);
         comboBoxModel.setSelectedItem(comboBoxModel.getElementAt(0));
-        dataToExportTable = mealsList.stream().map(Meal -> new Recipe( Meal.getType(), Meal.getName())).toArray(Recipe[]::new);
+        dataToExportTable = mealsList.stream().map(Meal -> new Recipe(Meal.getType(), Meal.getName())).toArray(Recipe[]::new);
         ExportTable.setModel(new MyTableModel(null, new String[]{"Name", "Type"}));
         setVisible(true);
         setModal(true);
@@ -67,7 +70,7 @@ public class ExportToPDFDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 MyTableModel mtm = (MyTableModel) ExportTable.getModel();
-                mtm.addRow(new Object[]{dataToExportTable[selectedMeal].getName(),dataToExportTable[selectedMeal].getType()});
+                mtm.addRow(new Object[]{dataToExportTable[selectedMeal].getName(), dataToExportTable[selectedMeal].getType()});
                 ExportTable.setModel(mtm);
                 mtm.fireTableDataChanged();
             }
@@ -85,10 +88,10 @@ public class ExportToPDFDialog extends JDialog {
 
     private void onOK() {
         MyTableModel tableModel = (MyTableModel) ExportTable.getModel();
-        ArrayList<String> MealsToExport = (ArrayList<String>) tableModel.getDataVector().stream().map((Row)->Row.get(0).toString()).collect(Collectors.toList());
+        ArrayList<String> MealsToExport = (ArrayList<String>) tableModel.getDataVector().stream().map((Row) -> Row.get(0).toString()).collect(Collectors.toList());
         Boolean exportSuccessful = false;
         exportSuccessful = PDFWorker.exportToPDF(MealController.getPDFModel(MealsToExport));
-        if(!exportSuccessful){
+        if (!exportSuccessful) {
             JOptionPane.showMessageDialog(null, "PDF export was unsuccessful", "An error occured", JOptionPane.ERROR_MESSAGE);
         }
         dispose();
@@ -98,4 +101,5 @@ public class ExportToPDFDialog extends JDialog {
         // add your code here if necessary
         dispose();
     }
+
 }
